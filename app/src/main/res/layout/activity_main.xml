@@ -45,6 +45,18 @@
         android:text="approot"
         android:onClick="test6"
         />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="query"
+        android:onClick="test7"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="approot"
+        android:onClick="test8"
+        />
 
 
     <TextView

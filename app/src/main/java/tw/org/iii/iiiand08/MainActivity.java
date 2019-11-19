@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private TextView content;
     private File sdroot, approot; //approot:sdroot-Android-data-<pkg-name>為入口
+    private  MyDBHelper myDBHelper;
+    private SQLiteOpenHelper sqLiteOpenHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
         if(!approot.exists()){
             approot.mkdirs();//有加s, 父目錄不在就新增; 沒s就直接掛點
         }
+
+        myDBHelper = new MyDBHelper(this, "mydb", null, 1);
+        db = myDBHelper.getReadableDatabase();//check能否增刪修改
+
 
     }
 
@@ -164,5 +171,10 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
             Log.v("brad", e.toString());
         }
+    }
+
+    //query
+    public void test7(View view) {
+        
     }
 }
