@@ -6,8 +6,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,8 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private TextView content;
     private File sdroot, approot; //approot:sdroot-Android-data-<pkg-name>為入口
+
     private  MyDBHelper myDBHelper;
-    private SQLiteOpenHelper sqLiteOpenHelper;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         myDBHelper = new MyDBHelper(this, "mydb", null, 1);
-        db = myDBHelper.getReadableDatabase();//check能否增刪修改
+        db = myDBHelper.getReadableDatabase();//check能否增刪修改==>可
 
 
     }
@@ -175,6 +179,47 @@ public class MainActivity extends AppCompatActivity {
 
     //query
     public void test7(View view) {
-        
+        Cursor c = db.query("user", null, null,null,
+                null,null,null);
+        while(c.moveToNext()){
+            //String data = c.getString(0);
+            //Log.v("brad", data);
+
+            String id = c.getString(0);
+            String username = c.getString(1);
+            String tel = c.getString(2);
+            String birthday = c.getString(3);
+            //Log.v("brad", id + ":" + username + ":" + tel + ":" + birthday);
+            Log.v("brad", id + ":" + username + ":" + tel + ":" + birthday);
+        }
+
+    }
+
+    public void test8(View view) {
+        //String sql = "insert into user (username, tel, birthday) value ("aa","bb",'cc')"; //(此方法不好,sql injection) ;id自動遞增, 需要指底欄位給value
+        //db.execute(sql);
+        ContentValues values = new ContentValues();
+        values.put("username", "brad");
+        values.put("tel","1234567");
+        values.put("birthday", 2000-01-02);
+        db.insert("user", null, values);
+        test7( null);
+    }
+
+    //delete
+    public void test9(View view) {
+        //delete from user where id=2 and username='brad'
+        db.delete("user", "id = ? and username = ?", new String[]{"1","brad"});//1-1 也是為了避免隱碼攻擊; 沒有給where,會直接全砍
+        test7(null);//query
+    }
+
+    //update
+    public void test10(View view) {
+        //update user set username='peter', tel='0912-123456' where id=4;
+        ContentValues values = new ContentValues();
+        values.put("username", "peter");
+        values.put("tel","0912-123456");
+        db.update("user", values, "id=?", new String[]{"10"}); //記得value要餵值, 否則會閃退
+        test7(null);//query
     }
 }
